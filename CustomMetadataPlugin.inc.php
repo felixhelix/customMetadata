@@ -31,20 +31,25 @@ class CustomMetadataPlugin extends GenericPlugin {
 	 * @return boolean True if plugin initialized successfully; if false,
 	 * 	the plugin will not be registered.
 	 */
-	function register($category, $path) {
-		if (parent::register($category, $path)) {
-			if ($this->getEnabled()) {
+	public function register($category, $path, $mainContextId = NULL) {
+
+		$success = parent::register($category, $path, $mainContextId);
+		
+		if ($success && $this->getEnabled($mainContextId)) {	
 			
 			$this->import('CustomMetadataDAO');
 			$customMetadataDao = new CustomMetadataDAO();
 			DAORegistry::registerDAO('CustomMetadataDAO', $customMetadataDao);			
+
+			// Add newCustomFields to publication schema
+			HookRegistry::register('Schema::get::publication', array($this, 'addToSchema'));			
 
 			// Insert new fields into author metadata submission form (submission step 3) and metadata form
 			HookRegistry::register('Templates::Submission::SubmissionMetadataForm::AdditionalMetadata', array($this, 'metadataFieldEdit'));
 
 			// Hook for initData in two forms -- init the new fields
 			HookRegistry::register('submissionsubmitstep3form::initdata', array($this, 'metadataInitData'));
-			HookRegistry::register('issueentrysubmissionreviewform::initdata', array($this, 'metadataInitData'));
+			// HookRegistry::register('issueentrysubmissionreviewform::initdata', array($this, 'metadataInitData'));
 
 			// Hook for readUserVars in two forms -- consider the new field entries
 			HookRegistry::register('submissionsubmitstep3form::readuservars', array($this, 'metadataReadUserVars'));
@@ -61,10 +66,20 @@ class CustomMetadataPlugin extends GenericPlugin {
 			// Consider the new fields for ArticleDAO for storage
 			HookRegistry::register('articledao::getAdditionalFieldNames', array($this, 'articleSubmitGetFieldNames'));
 
-			}
-			return true;
+			// Install database tables
+			// $migration = $this->getInstallMigration();
+			// $migration->up();
 		}
-		return false;
+		
+		return $success;;
+	}
+
+	/**
+	 * @copydoc Plugin::getInstallMigration()
+	 */
+	function getInstallMigration() {
+		$this->import('CustomMetadataSchemaMigration');
+		return new CustomMetadataSchemaMigration();
 	}
 
 	/**
@@ -86,6 +101,31 @@ class CustomMetadataPlugin extends GenericPlugin {
 	 * Metadata
 	 */
 
+    /**
+     * Extend the articles entity's schema with a preprint id property
+     */
+    public function addToSchema(string $hookName, array $args) {
+		$schema = $args[0]; /** @var stdClass */
+		$contextId = $this->getCurrentContextId();		
+
+		$customMetadataDao = DAORegistry::getDAO('CustomMetadataDAO');
+		$customFields = $customMetadataDao->getByContextId($contextId);			 
+		while ($customField = $customFields->next()){
+			//$propertyName = $customField->getName();
+			$propertyName = "customValue".$customField->getId();
+			error_log("addToSchema:CustomField " . $propertyName);
+			// $schema->properties->{$propertyName} = (object) [
+			$schema->properties->customValue1 = (object) [
+				'type' => $customField->getType(),
+				'apiSummary' => true,
+				'multilingual' => false,
+				'validation' => ['nullable']
+			];
+		}
+		return false;
+    }  
+
+	 
 	/**
 	 * Insert custom metadata fields into author submission step 3 and metadata edit form
 	 */
@@ -119,7 +159,7 @@ class CustomMetadataPlugin extends GenericPlugin {
 				'fieldDescription' => $customField->getDescription(),
 			));
 			
-			$output .= $smarty->fetch($this->getTemplatePath() . 'textinput.tpl');
+			$output .= $smarty->fetch($this->getTemplateResource('textinput.tpl'));
 			
 		}				
 
@@ -169,7 +209,8 @@ class CustomMetadataPlugin extends GenericPlugin {
 		$contextId = $this->getCurrentContextId();
 		
 		if (get_class($form) == 'SubmissionSubmitStep3Form') {
-			$article =& $params[1];
+			$form =& $params[0];
+			$article =& $form->submission;
 		} elseif (get_class($form) == 'IssueEntrySubmissionReviewForm') {
 			$article = $form->getSubmission();
 		}
@@ -179,7 +220,8 @@ class CustomMetadataPlugin extends GenericPlugin {
 		while ($customField = $customFields->next()){
 			$customValueField = "customValue".$customField->getId();
 			$customValue = $form->getData($customValueField);
-			$article->setData($customValueField, $customValue);
+			error_log("metadataExecute:CustomValues = " . $customValueField . " = " . $customValue);
+			$article->setData("customValue1", $customValue);
 		}
 		
 		return false;
@@ -221,11 +263,6 @@ class CustomMetadataPlugin extends GenericPlugin {
 		return false;
 	}	
 
-	
-	function getTemplatePath() {
-		return parent::getTemplatePath();
-	}
-	
 	function getCurrentContextId() {
 		$contextId = null;
 		$request = $this->getRequest();

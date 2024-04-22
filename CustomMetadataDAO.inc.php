@@ -27,7 +27,7 @@ class CustomMetadataDAO extends DAO {
 	function getByContextId($contextId) {
 		$result = $this->retrieveRange(
 			'SELECT * FROM custom_metadata WHERE context_id = ?',
-			(int) $contextId
+			[(int) $contextId]
 		);
 		
 		return new DAOResultFactory($result, $this, '_fromRow');

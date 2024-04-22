@@ -36,7 +36,7 @@ class CustomMetadata extends DataObject {
 	function getType() {
 		return $this->getData('type');
 	}
-	function setType($parent) {
+	function setType($type) {
 		return $this->setData('type', $type);
 	}	
 
