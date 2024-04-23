@@ -14,13 +14,20 @@ msgstr ""
 msgid "plugins.generic.customMetadata.displayName"
 msgstr "CustomMetadata"
 
+msgid "plugins.generic.customMetadata.tabLabel"
+msgstr "Additional Metadata"
+
 msgid "plugins.generic.customMetadata.description"
 msgstr "The CustomMetadata plugin helps adding custom metadata fields to submissions."
 
-msgid "plugins.generic.customMetadata.conflictsOfInterest.label"
+msgid "plugins.generic.customMetadata.conflictOfInterests.label"
 msgstr "Conflicts of Interest"
 
-msgid "plugins.generic.customMetadata.conflictsOfInterest.description"
-msgstr "Declare possible confilcts of interest"
+msgid "plugins.generic.customMetadata.conflictOfInterests.description"
+msgstr "Declare possible conflicts of interest"
 
+msgid "plugins.generic.customMetadata.sourcesOfFunding.label"
+msgstr "Sources of Funding"
 
+msgid "plugins.generic.customMetadata.sourcesOfFunding.description"
+msgstr "List your sources of funding."

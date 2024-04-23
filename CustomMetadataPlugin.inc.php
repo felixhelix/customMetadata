@@ -21,7 +21,9 @@
  
 import('lib.pkp.classes.plugins.GenericPlugin');
 import('lib.pkp.classes.form.FormBuilderVocabulary');
+import('plugins.generic.customMetadata.classes.components.forms.WorkflowMetaForm');
 
+const LOC_KEY_PREFIX = "plugins.generic.customMetadata.";
 
 class CustomMetadataPlugin extends GenericPlugin {
 
@@ -31,6 +33,7 @@ class CustomMetadataPlugin extends GenericPlugin {
 	 * @return boolean True if plugin initialized successfully; if false,
 	 * 	the plugin will not be registered.
 	 */
+
 	public function register($category, $path, $mainContextId = NULL) {
 
 		$success = parent::register($category, $path, $mainContextId);
@@ -42,33 +45,34 @@ class CustomMetadataPlugin extends GenericPlugin {
 			DAORegistry::registerDAO('CustomMetadataDAO', $customMetadataDao);			
 
 			// Add newCustomFields to publication schema
-			HookRegistry::register('Schema::get::publication', array($this, 'addToSchema'));			
+			HookRegistry::register('Schema::get::submission', array($this, 'addToSchema'));			
 
-			// Insert new fields into author metadata submission form (submission step 3) and metadata form
-			HookRegistry::register('Templates::Submission::SubmissionMetadataForm::AdditionalMetadata', array($this, 'metadataFieldEdit'));
-
-			// Hook for initData in two forms -- init the new fields
-			HookRegistry::register('submissionsubmitstep3form::initdata', array($this, 'metadataInitData'));
-			// HookRegistry::register('issueentrysubmissionreviewform::initdata', array($this, 'metadataInitData'));
-
-			// Hook for readUserVars in two forms -- consider the new field entries
+			// Add custom metadata fields to the submission wizard metadata form (submission step 3) 
+			// ops3/lib/pkp/templates/submission/submissionMetadataFormFields.tpl
+			HookRegistry::register('Templates::Submission::SubmissionMetadataForm::AdditionalMetadata', array($this, 'metadataFieldEditWizard'));
+			// Hook for readUserVars -- consider the new field entries
 			HookRegistry::register('submissionsubmitstep3form::readuservars', array($this, 'metadataReadUserVars'));
-			HookRegistry::register('issueentrysubmissionreviewform::readuservars', array($this, 'metadataReadUserVars'));
-
-			// Hook for execute in two forms -- consider the new fields in the article settings
+			// Hook for execute -- consider the new fields in the article settings
 			HookRegistry::register('submissionsubmitstep3form::execute', array($this, 'metadataExecute'));
-			HookRegistry::register('issueentrysubmissionreviewform::execute', array($this, 'metadataExecute'));
-
-			// Hook for save in two forms -- add validation for the new fields
+			// Hook for save  -- add validation for the new fields
 			HookRegistry::register('submissionsubmitstep3form::Constructor', array($this, 'addCheck'));
-			HookRegistry::register('issueentrysubmissionreviewform::Constructor', array($this, 'addCheck'));
-
 			// Consider the new fields for ArticleDAO for storage
-			HookRegistry::register('articledao::getAdditionalFieldNames', array($this, 'articleSubmitGetFieldNames'));
+			// HookRegistry::register('articledao::getAdditionalFieldNames', array($this, 'articleSubmitGetFieldNames'));
+
+
+			// Add custom metadata fields to the submission tab
+			// Insert a new sub-tab with the custom metadata fields (PKP stopped using the template with the hook)
+			HookRegistry::register('Template::Workflow::Publication', array($this, 'metadataFieldEdit'));
+			// Add the API handler
+			HookRegistry::register('Dispatcher::dispatch', array($this, 'setupAPIHandler'));
 
 			// Install database tables
 			// $migration = $this->getInstallMigration();
 			// $migration->up();
+			// Need to manually add data for each custom field in the table and also 
+			// provide the translation entries in the locale files
+			// keys are plugins.generic.customMetadata.FIELDNAME.label and 
+			// plugins.generic.customMetadata.FIELDNAME.description
 		}
 		
 		return $success;;
@@ -96,6 +100,26 @@ class CustomMetadataPlugin extends GenericPlugin {
 		return __('plugins.generic.customMetadata.description');
 	}
 
+    public function setupAPIHandler($hookName, $request)
+    {
+        $router = $request->getRouter();
+        if (!($router instanceof \APIRouter)) {
+            return;
+        }
+
+        if (str_contains($request->getRequestPath(), 'api/v1/customMetadata')) {
+            $this->import('api.v1.customMetadata.customMetadataHandler');
+            $handler = new CustomMetadataHandler();
+        }
+
+        if (!isset($handler)) {
+            return;
+        }
+		
+        $router->setHandler($handler);	
+        $handler->getApp()->run();	
+        exit;
+    }
 
 	/*
 	 * Metadata
@@ -115,8 +139,8 @@ class CustomMetadataPlugin extends GenericPlugin {
 			$propertyName = "customValue".$customField->getId();
 			error_log("addToSchema:CustomField " . $propertyName);
 			// $schema->properties->{$propertyName} = (object) [
-			$schema->properties->customValue1 = (object) [
-				'type' => $customField->getType(),
+			$schema->properties->$propertyName = (object) [
+				'type' => 'string',
 				'apiSummary' => true,
 				'multilingual' => false,
 				'validation' => ['nullable']
@@ -127,36 +151,34 @@ class CustomMetadataPlugin extends GenericPlugin {
 
 	 
 	/**
-	 * Insert custom metadata fields into author submission step 3 and metadata edit form
+	 * Insert custom metadata fields into author submission step 3
 	 */
-	function metadataFieldEdit($hookName, $params) {
+	function metadataFieldEditWizard($hookName, $params) {
+		error_log("metadataFieldEdit:");
 		$smarty =& $params[1];
 		$output =& $params[2];
 		
 		$fbv = $smarty->getFBV();
 		$form = $fbv->getForm();
 		
-		if (get_class($form) == 'SubmissionSubmitStep3Form') {
-			$submission = $form->submission;
-		} elseif (get_class($form) == 'IssueEntrySubmissionReviewForm') {
-			$submission = $form->getSubmission();
-		}
+		$submission = $form->submission;
 		
 		$contextId = $this->getCurrentContextId();
 		$customMetadataDao = DAORegistry::getDAO('CustomMetadataDAO');
 		$customFields = $customMetadataDao->getByContextId($contextId);			 
 		while ($customField = $customFields->next()){
 			
+			// Get the setting_name of the field
 			$customValueField = $this->getcustomValueField($customField->getId());
+			// Get the submission custom meta-data setting_value
 			$smarty->assign('customValue', $submission->getData($customValueField));
-			
 			
 			$smarty->assign(array(
 				'type' => $customField->getType(),
 				'localized' => $customField->getLocalized(),				
 				'customValueId' => $customField->getId(),
-				'fieldLabel' => $customField->getLabel(),
-				'fieldDescription' => $customField->getDescription(),
+				'fieldLabel' => LOC_KEY_PREFIX . $customField->getLabel() . ".label",
+				'fieldDescription' => LOC_KEY_PREFIX . $customField->getDescription() . ".description",
 			));
 			
 			$output .= $smarty->fetch($this->getTemplateResource('textinput.tpl'));
@@ -168,6 +190,7 @@ class CustomMetadataPlugin extends GenericPlugin {
 
 	/**
 	 * Add custome metadata elements to the article
+	 * hook: articledao::getAdditionalFieldNames
 	 */
 	function articleSubmitGetFieldNames($hookName, $params) {
 		$fields =& $params[1];
@@ -186,6 +209,7 @@ class CustomMetadataPlugin extends GenericPlugin {
 	
 	/**
 	 * Concern custom metadata fields in the form
+	 * hook: submissionsubmitstep3form::readuservars
 	 */
 	function metadataReadUserVars($hookName, $params) {
 		$userVars =& $params[1];
@@ -202,54 +226,23 @@ class CustomMetadataPlugin extends GenericPlugin {
 	}
 
 	/**
-	 * Set article custom metadata fields
+	 * Set custom metadata field values
+	 * hook: submissionsubmitstep3form::execute
 	 */
-	function metadataExecute($hookName, $params) {
+	function metadataExecute($hookName, $params): void {
 		$form =& $params[0];
 		$contextId = $this->getCurrentContextId();
 		
-		if (get_class($form) == 'SubmissionSubmitStep3Form') {
-			$form =& $params[0];
-			$article =& $form->submission;
-		} elseif (get_class($form) == 'IssueEntrySubmissionReviewForm') {
-			$article = $form->getSubmission();
-		}
+		$form =& $params[0];
+		$article =& $form->submission;
 		
 		$customMetadataDao = DAORegistry::getDAO('CustomMetadataDAO');
 		$customFields = $customMetadataDao->getByContextId($contextId);			 
 		while ($customField = $customFields->next()){
 			$customValueField = "customValue".$customField->getId();
 			$customValue = $form->getData($customValueField);
-			error_log("metadataExecute:CustomValues = " . $customValueField . " = " . $customValue);
-			$article->setData("customValue1", $customValue);
+			$article->setData($customValueField, $customValue);
 		}
-		
-		return false;
-	}
-
-
-	/**
-	 * Init article custom metadata fields
-	 */
-	function metadataInitData($hookName, $params) {
-		$form =& $params[0];
-		$contextId = $this->getCurrentContextId();
-		
-		if (get_class($form) == 'SubmissionSubmitStep3Form') {
-			$article = $form->submission;
-		} elseif (get_class($form) == 'IssueEntrySubmissionReviewForm') {
-			$article = $form->getSubmission();
-		}
-		
-		$customMetadataDao = DAORegistry::getDAO('CustomMetadataDAO');
-		$customFields = $customMetadataDao->getByContextId($contextId);			 
-		while ($customField = $customFields->next()){
-			$customValueField = "customValue".$customField->getId();
-			$customValue = $article->getData($customValueField);
-			$form->setData($customValueField, $customValue);
-		}
-		
-		return false;
 	}
 	
 	/**
@@ -262,6 +255,34 @@ class CustomMetadataPlugin extends GenericPlugin {
 		
 		return false;
 	}	
+
+	/**
+	 * Add custom metadata fields to the submission page
+	 * @param string $hookname
+	 * @param array $params [string, TemplateManager]
+	 */	
+	function metadataFieldEdit($hookName, $params): void {
+
+		$request = $this->getRequest();
+		$context = $request->getContext();
+		$templateMgr = $params[1];
+
+		$submission = $templateMgr->getTemplateVars('submission');
+		$latestPublication = $submission->getLatestPublication();
+		$latestPublicationApiUrl = $request->getDispatcher()->url($request, ROUTE_API, $context->getData('urlPath'), 'customMetadata/update/' . $submission->getId());
+
+		$form = new WorkflowMetaForm($latestPublicationApiUrl, $submission);
+		$state = $templateMgr->getTemplateVars('state');
+		$state['components'][FORM_WORKFLOW_CUSTOM_META] = $form->getConfig();
+		$templateMgr->assign(['state'=> $state,
+		]);	
+
+		$templateMgr->display($this->getTemplateResource("workflowTab.tpl"));	
+	}
+
+	/**
+	 * Helper functions
+	 */
 
 	function getCurrentContextId() {
 		$contextId = null;
