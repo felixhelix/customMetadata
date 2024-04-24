@@ -166,23 +166,28 @@ class CustomMetadataPlugin extends GenericPlugin {
 		$contextId = $this->getCurrentContextId();
 		$customMetadataDao = DAORegistry::getDAO('CustomMetadataDAO');
 		$customFields = $customMetadataDao->getByContextId($contextId);			 
+
 		while ($customField = $customFields->next()){
-			
-			// Get the setting_name of the field
-			$customValueField = $this->getcustomValueField($customField->getId());
-			// Get the submission custom meta-data setting_value
-			$smarty->assign('customValue', $submission->getData($customValueField));
-			
-			$smarty->assign(array(
-				'type' => $customField->getType(),
-				'localized' => $customField->getLocalized(),				
-				'customValueId' => $customField->getId(),
-				'fieldLabel' => LOC_KEY_PREFIX . $customField->getLabel() . ".label",
-				'fieldDescription' => LOC_KEY_PREFIX . $customField->getDescription() . ".description",
-			));
-			
-			$output .= $smarty->fetch($this->getTemplateResource('textinput.tpl'));
-			
+			if ($customField->getSectionId() == $submission->getSectionId() or $customField->getSectionId() == 0) {
+				// Get the setting_name of the field
+				$customValueField = $this->getcustomValueField($customField->getId());
+				// Get the submission custom meta-data setting_value
+				$smarty->assign('customValue', $submission->getData($customValueField));
+				
+				$smarty->assign(array(
+					'type' => $customField->getType(),
+					'localized' => $customField->getLocalized(),				
+					'customValueId' => $customField->getId(),
+					'fieldLabel' => LOC_KEY_PREFIX . $customField->getLabel() . ".label",
+					'fieldDescription' => LOC_KEY_PREFIX . $customField->getDescription() . ".description",
+				));
+				
+				if ($customField->getType() == "text") {
+					$output .= $smarty->fetch($this->getTemplateResource('textinput.tpl'));
+				} else if ($customField->getType() == "textarea") {
+					$output .= $smarty->fetch($this->getTemplateResource('textareainput.tpl'));
+				}
+			}
 		}				
 
 		return false;

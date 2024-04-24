@@ -1,6 +1,6 @@
 <?php
 
-use PKP\components\forms\FieldHTML;
+use PKP\components\forms\FieldTextarea;
 use PKP\components\forms\FieldText;
 use \PKP\components\forms\FormComponent;
 
@@ -36,16 +36,28 @@ class WorkflowMetaForm extends FormComponent {
 			$customMetadataDao = DAORegistry::getDAO('CustomMetadataDAO');
 			$customFields = $customMetadataDao->getByContextId($contextId);			 
 			while ($customField = $customFields->next()){
-				// Get the setting_name of the field
-				$customValueField = "customValue".$customField->getId();
-				$this->addField(new FieldText($customValueField, [
-					'label' => __(LOC_KEY_PREFIX . $customField->getLabel() . ".label"),
-					'description' => __(LOC_KEY_PREFIX . $customField->getLabel() . ".description"),
-					'groupId' => 'default',
-					'isRequired' => false,
-					'value' => $submission->getData($customValueField),
-					'size' => 'large'
-				]));			
+				if ($customField->getSectionId() == $submission->getSectionId() or $customField->getSectionId() == 0) {
+					// Get the setting_name of the field
+					$customValueField = "customValue".$customField->getId();
+					if ($customField->getType() == "text") {
+						$this->addField(new FieldText($customValueField, [
+							'label' => __(LOC_KEY_PREFIX . $customField->getLabel() . ".label"),
+							'description' => __(LOC_KEY_PREFIX . $customField->getLabel() . ".description"),
+							'groupId' => 'default',
+							'isRequired' => false,
+							'value' => $submission->getData($customValueField),
+							'size' => 'large'
+						]));			
+					} else if ($customField->getType() == "textarea") {
+						$this->addField(new FieldTextarea($customValueField, [
+							'label' => __(LOC_KEY_PREFIX . $customField->getLabel() . ".label"),
+							'description' => __(LOC_KEY_PREFIX . $customField->getLabel() . ".description"),
+							'groupId' => 'default',
+							'isRequired' => false,
+							'value' => $submission->getData($customValueField),
+						]));			
+					}
+				}
 			}
 	}
 }

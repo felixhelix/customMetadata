@@ -38,6 +38,7 @@ class CustomMetadataDAO extends DAO {
 		$customMetadata = $this->newDataObject();
 		$customMetadata->setId($row['custom_metadata_id']);
 		$customMetadata->setContextId($row['context_id']);
+		$customMetadata->setSectionId($row['section_id']);
 		$customMetadata->setType($row['type']);
 		$customMetadata->setLocalized($row['localized']);		
 		$customMetadata->setName($row['name']);

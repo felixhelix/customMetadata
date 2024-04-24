@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * Handler to update the custom meta-data values provided in the publication stage. 
+ */
 import('lib.pkp.classes.handler.APIHandler');
 
 class CustomMetadataHandler extends APIHandler
