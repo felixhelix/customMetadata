@@ -21,16 +21,22 @@ msgid "plugins.generic.customMetadata.description"
 msgstr "The CustomMetadata plugin helps adding custom metadata fields to submissions."
 
 msgid "plugins.generic.customMetadata.conflictOfInterests.label"
-msgstr "Conflicts of Interest"
+msgstr "Competing Interests"
 
 msgid "plugins.generic.customMetadata.conflictOfInterests.description"
-msgstr "Declare possible conflicts of interest"
+msgstr "Declare possible competing interests"
+
+msgid "plugins.generic.customMetadata.conflictOfInterests.noneDisclosed"
+msgstr "No competing interests were disclosed."
 
 msgid "plugins.generic.customMetadata.sourcesOfFunding.label"
-msgstr "Sources of Funding"
+msgstr "Grant Information"
 
 msgid "plugins.generic.customMetadata.sourcesOfFunding.description"
 msgstr "List your sources of funding."
+
+msgid "plugins.generic.customMetadata.sourcesOfFunding.noneDisclosed"
+msgstr "The author(s) declared that no grants were involved in supporting this work."
 
 msgid "plugins.generic.customMetadata.preRegistration.label"
 msgstr "Preregistration Reference"
