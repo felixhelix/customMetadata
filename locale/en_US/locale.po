@@ -26,3 +26,14 @@ msgstr "Conflicts of Interest"
 msgid "plugins.generic.customMetadata.conflictOfInterests.description"
 msgstr "Declare possible conflicts of interest"
 
+msgid "plugins.generic.customMetadata.sourcesOfFunding.label"
+msgstr "Sources of Funding"
+
+msgid "plugins.generic.customMetadata.sourcesOfFunding.description"
+msgstr "List your sources of funding."
+
+msgid "plugins.generic.customMetadata.preRegistration.label"
+msgstr "Preregistration Reference"
+
+msgid "plugins.generic.customMetadata.preRegistration.description"
+msgstr "Insert a reference to the pregristration."
