@@ -178,8 +178,8 @@ class CustomMetadataPlugin extends GenericPlugin {
 					'type' => $customField->getType(),
 					'localized' => $customField->getLocalized(),				
 					'customValueId' => $customField->getId(),
-					'fieldLabel' => LOC_KEY_PREFIX . $customField->getLabel() . ".label",
-					'fieldDescription' => LOC_KEY_PREFIX . $customField->getDescription() . ".description",
+					'fieldLabel' => LOC_KEY_PREFIX . $customField->getName() . ".label",
+					'fieldDescription' => LOC_KEY_PREFIX . $customField->getName() . ".description",
 				));
 				
 				if ($customField->getType() == "text") {

@@ -41,8 +41,8 @@ class WorkflowMetaForm extends FormComponent {
 					$customValueField = "customValue".$customField->getId();
 					if ($customField->getType() == "text") {
 						$this->addField(new FieldText($customValueField, [
-							'label' => __(LOC_KEY_PREFIX . $customField->getLabel() . ".label"),
-							'description' => __(LOC_KEY_PREFIX . $customField->getLabel() . ".description"),
+							'label' => __(LOC_KEY_PREFIX . $customField->getName() . ".label"),
+							'description' => __(LOC_KEY_PREFIX . $customField->getName() . ".description"),
 							'groupId' => 'default',
 							'isRequired' => false,
 							'value' => $submission->getData($customValueField),
@@ -50,8 +50,8 @@ class WorkflowMetaForm extends FormComponent {
 						]));			
 					} else if ($customField->getType() == "textarea") {
 						$this->addField(new FieldTextarea($customValueField, [
-							'label' => __(LOC_KEY_PREFIX . $customField->getLabel() . ".label"),
-							'description' => __(LOC_KEY_PREFIX . $customField->getLabel() . ".description"),
+							'label' => __(LOC_KEY_PREFIX . $customField->getName() . ".label"),
+							'description' => __(LOC_KEY_PREFIX . $customField->getName() . ".description"),
 							'groupId' => 'default',
 							'isRequired' => false,
 							'value' => $submission->getData($customValueField),
