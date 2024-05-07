@@ -18,5 +18,6 @@ Changes to original version:
 As for the last one: This was due to the software interpreting label and description values in the metadata template as translation keys. The solution was to treat the field values as such and add the translations to the .loc file.
 
 TODO: support multilingual input. Would require custom_metadata_settings table and some changes
-TODO: UI in the backend
+TODO: backend UI to setup fields
 TODO: input validation
+TODO: option to set fields as required
