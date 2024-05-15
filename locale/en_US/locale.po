@@ -35,6 +35,9 @@ msgstr "required"
 msgid "plugins.generic.customMetadata.description"
 msgstr "The CustomMetadata plugin helps adding custom metadata fields to submissions."
 
+msgid "plugins.generic.customMetadata.update.success"
+msgstr "Metadata updated successfully"
+
 msgid "plugins.generic.customMetadata.conflictOfInterests.label"
 msgstr "Competing Interests"
 
@@ -57,4 +60,4 @@ msgid "plugins.generic.customMetadata.preRegistration.label"
 msgstr "Preregistration Reference"
 
 msgid "plugins.generic.customMetadata.preRegistration.description"
-msgstr "Insert a reference to the pregristration."
+msgstr "Insert a reference to a pre-registration if applicable."

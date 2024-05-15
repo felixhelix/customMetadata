@@ -24,7 +24,7 @@ class WorkflowMetaForm extends FormComponent {
 		 * @var $submissionFile SubmissionFile
 		 */
 		$this->action = $action;
-		$this->successMessage = __('plugins.generic.jatsParser.publication.jats.fulltext.success');
+		$this->successMessage = __('plugins.generic.customMetadata.update.success');
 
 			$this->addField(new FieldText("submissionId", array(
 				'inputType' => 'hidden',	
@@ -44,7 +44,7 @@ class WorkflowMetaForm extends FormComponent {
 							'label' => __(LOC_KEY_PREFIX . $customField->getName() . ".label"),
 							'description' => __(LOC_KEY_PREFIX . $customField->getName() . ".description"),
 							'groupId' => 'default',
-							'isRequired' => false,
+							'isRequired' => $customField->getRequired(),
 							'value' => $submission->getData($customValueField),
 							'size' => 'large'
 						]));			
@@ -53,7 +53,7 @@ class WorkflowMetaForm extends FormComponent {
 							'label' => __(LOC_KEY_PREFIX . $customField->getName() . ".label"),
 							'description' => __(LOC_KEY_PREFIX . $customField->getName() . ".description"),
 							'groupId' => 'default',
-							'isRequired' => false,
+							'isRequired' => $customField->getRequired(),
 							'value' => $submission->getData($customValueField),
 						]));			
 					}
