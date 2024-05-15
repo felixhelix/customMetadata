@@ -131,35 +131,6 @@ class CustomMetadataPlugin extends GenericPlugin {
 	}
 
 	/**
-	 * @copydoc Plugin::manage()
-	 */
-	function manage($args, $request) {
-		switch ($request->getUserVar('verb')) {
-			case 'settings':
-				$context = $request->getContext();
-
-				AppLocale::requireComponents(LOCALE_COMPONENT_APP_COMMON,  LOCALE_COMPONENT_PKP_MANAGER);
-				$templateMgr = TemplateManager::getManager($request);
-				$templateMgr->register_function('plugin_url', array($this, 'smartyPluginUrl'));
-
-				$this->import('CustomMetadataSettingsForm');
-				$form = new CustomMetadataSettingsForm($this, $context->getId());
-
-				if ($request->getUserVar('save')) {
-					$form->readInputData();
-					if ($form->validate()) {
-						$form->execute();
-						return new JSONMessage(true);
-					}
-				} else {
-					$form->initData();
-				}
-				return new JSONMessage(true, $form->fetch($request));
-		}
-		return parent::manage($args, $request);
-	}
-
-	/**
 	 * Extend the website settings tabs to include custom locale
 	 * @param $hookName string The name of the invoked hook
 	 * @param $args array Hook parameters
@@ -275,6 +246,7 @@ class CustomMetadataPlugin extends GenericPlugin {
 					'customValueId' => $customField->getId(),
 					'fieldLabel' => LOC_KEY_PREFIX . $customField->getName() . ".label",
 					'fieldDescription' => LOC_KEY_PREFIX . $customField->getName() . ".description",
+					'required' => $customField->getRequired()
 				));
 				
 				if ($customField->getType() == "text") {

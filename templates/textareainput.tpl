@@ -11,7 +11,7 @@
 {assign var="customValueField" value="customValue`$customValueId`"}
 
 {fbvFormArea id=$customValueField}
-	{fbvFormSection label=$fieldLabel for="source" description=$fieldDescription}
-		{fbvElement type="textarea" name=$customValueField id=$customValueField value=$customValue readonly=$readOnly}
+	{fbvFormSection label=$fieldLabel for="source" description=$fieldDescription required=$required}
+		{fbvElement type="textarea" name=$customValueField id=$customValueField value=$customValue readonly=$readOnly required=$required}
 	{/fbvFormSection}
 {/fbvFormArea}
