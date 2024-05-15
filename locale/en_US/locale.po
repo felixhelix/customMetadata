@@ -17,6 +17,21 @@ msgstr "CustomMetadata"
 msgid "plugins.generic.customMetadata.tabLabel"
 msgstr "Additional Metadata"
 
+msgid "plugins.generic.customMetadata.noneCreated"
+msgstr "No additional metadata created"
+
+msgid "plugins.generic.customMetadata.settings"
+msgstr "Settings"
+
+msgid "plugins.generic.customMetadata.metadataFieldName"
+msgstr "name"
+
+msgid "plugins.generic.customMetadata.metadataFieldType"
+msgstr "type"
+
+msgid "plugins.generic.customMetadata.metadataFieldRequired"
+msgstr "required"
+
 msgid "plugins.generic.customMetadata.description"
 msgstr "The CustomMetadata plugin helps adding custom metadata fields to submissions."
 

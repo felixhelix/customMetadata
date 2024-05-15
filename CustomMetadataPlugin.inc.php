@@ -40,7 +40,7 @@ class CustomMetadataPlugin extends GenericPlugin {
 		
 		if ($success && $this->getEnabled($mainContextId)) {	
 			
-			$this->import('CustomMetadataDAO');
+			import('plugins.generic.customMetadata.classes.CustomMetadataDAO');
 			$customMetadataDao = new CustomMetadataDAO();
 			DAORegistry::registerDAO('CustomMetadataDAO', $customMetadataDao);			
 
@@ -66,6 +66,10 @@ class CustomMetadataPlugin extends GenericPlugin {
 			// Add the API handler
 			HookRegistry::register('Dispatcher::dispatch', array($this, 'setupAPIHandler'));
 
+			// Add custom metadata tab for settings
+			HookRegistry::register('Template::Settings::website', array($this, 'callbackShowWebsiteSettingsTabs'));
+			HookRegistry::register('LoadComponentHandler', array($this, 'setupGridHandler'));
+			
 			// Install database tables
 			// $migration = $this->getInstallMigration();
 			// $migration->up();
@@ -100,6 +104,97 @@ class CustomMetadataPlugin extends GenericPlugin {
 		return __('plugins.generic.customMetadata.description');
 	}
 
+	/**
+	 * @copydoc Plugin::getActions()
+	 */
+	function getActions($request, $verb) {
+		$router = $request->getRouter();
+		$dispatcher = $request->getDispatcher();
+		import('lib.pkp.classes.linkAction.request.RedirectAction');		
+		import('lib.pkp.classes.linkAction.request.AjaxModal');
+		return array_merge(
+			$this->getEnabled()?[
+				new LinkAction(
+					'settings',
+					new RedirectAction($dispatcher->url(
+						$request, ROUTE_PAGE,
+						null, 'management', 'settings', 'website',
+						array('uid' => uniqid()), // Force reload
+						'customMetadata' // Anchor for tab
+					)),
+					__('plugins.generic.customMetadata.settings'),
+					null
+				),				
+			]:[],
+			parent::getActions($request, $verb)
+		);
+	}
+
+	/**
+	 * @copydoc Plugin::manage()
+	 */
+	function manage($args, $request) {
+		switch ($request->getUserVar('verb')) {
+			case 'settings':
+				$context = $request->getContext();
+
+				AppLocale::requireComponents(LOCALE_COMPONENT_APP_COMMON,  LOCALE_COMPONENT_PKP_MANAGER);
+				$templateMgr = TemplateManager::getManager($request);
+				$templateMgr->register_function('plugin_url', array($this, 'smartyPluginUrl'));
+
+				$this->import('CustomMetadataSettingsForm');
+				$form = new CustomMetadataSettingsForm($this, $context->getId());
+
+				if ($request->getUserVar('save')) {
+					$form->readInputData();
+					if ($form->validate()) {
+						$form->execute();
+						return new JSONMessage(true);
+					}
+				} else {
+					$form->initData();
+				}
+				return new JSONMessage(true, $form->fetch($request));
+		}
+		return parent::manage($args, $request);
+	}
+
+	/**
+	 * Extend the website settings tabs to include custom locale
+	 * @param $hookName string The name of the invoked hook
+	 * @param $args array Hook parameters
+	 * @return boolean Hook handling status
+	 */
+	function callbackShowWebsiteSettingsTabs($hookName, $args) {
+		$templateMgr = $args[1];
+		$output =& $args[2];
+
+		$output .= $templateMgr->fetch($this->getTemplateResource('customMetadataTab.tpl'));
+
+		// Permit other plugins to continue interacting with this hook
+		return false;
+	}
+
+	/**
+	 * Permit requests to the custom metadata grid handler
+	 * @param $hookName string The name of the hook being invoked
+	 * @param $args array The parameters to the invoked hook
+	 */
+	function setupGridHandler($hookName, $args) {
+		$component = $args[0];
+		if ($component == 'plugins.generic.customMetadata.controllers.grid.CustomMetadataGridHandler') {
+			// Allow the custom locale grid handler to get the plugin object
+			import($component);
+			CustomMetadataGridHandler::setPlugin($this);
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * @copydoc Plugin::setupAPIHandler
+	 * We need this handler to update the data during the submission process
+	 */
     public function setupAPIHandler($hookName, $request)
     {
         $router = $request->getRouter();
@@ -171,12 +266,12 @@ class CustomMetadataPlugin extends GenericPlugin {
 			if ($customField->getSectionId() == $submission->getSectionId() or $customField->getSectionId() == 0) {
 				// Get the setting_name of the field
 				$customValueField = $this->getcustomValueField($customField->getId());
+				error_log("metadataFieldEditWizard: type = " . $customField->getType());
 				// Get the submission custom meta-data setting_value
 				$smarty->assign('customValue', $submission->getData($customValueField));
 				
 				$smarty->assign(array(
-					'type' => $customField->getType(),
-					'localized' => $customField->getLocalized(),				
+					'type' => $customField->getType(),				
 					'customValueId' => $customField->getId(),
 					'fieldLabel' => LOC_KEY_PREFIX . $customField->getName() . ".label",
 					'fieldDescription' => LOC_KEY_PREFIX . $customField->getName() . ".description",

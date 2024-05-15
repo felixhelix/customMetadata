@@ -27,11 +27,9 @@ class CustomMetadataSchemaMigration extends Migration
             $table->bigInteger('custom_metadata_id')->autoIncrement();
             $table->bigInteger('context_id');
             $table->bigInteger('section_id');
+            $table->string('name', 255);            
             $table->string('type', 255);
-            $table->boolean('localized');
-            $table->string('name', 255);
-            $table->string('label', 255);
-            $table->longText('description', 255);
+            $table->boolean('required');
         });
     }
 
