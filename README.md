@@ -15,6 +15,7 @@ Changes to original version:
 - Use $customField->getType() to switch between templates input/textarea 
 - added a required option (incl. a corresponding database field)
 - added a tab under "website" which - for now - shows the custom metadata settings
+- added logging of custom metadata changes after submission
 - removed fields from the database table used for localization, label and description
 
 As for the localization: OJS/OPS 3.3 interprets label and description values in the metadata template as translation keys. So field labels and descriptions have to go in the .loc file. Examples are included.
