@@ -31,6 +31,8 @@ class CustomMetadataGridCellProvider extends GridCellProvider {
 				return array('label' => $customMetadata->getType());
 			case 'required':
 				return array('label' => $customMetadata->getRequired());
+			case 'section':
+				return array('label' => $customMetadata->getSectionId());				
 		}
 
 		return parent::getTemplateVarsFromColumn($row, $column);

@@ -10,14 +10,14 @@ Note that this plugin does only handle the input of the custom metadata in the b
 
 Changes to original version:
 - updated the code to work with OJS/OPS 3.3
-- added a filter to allow for metadata only to apply to certain sections
-- automatic creation of the required database table with schema.xml
+- added a filter to allow for metadata only to apply to certain sections (incl. a corresponding database field)
+- automatic creation of the required database table
 - Use $customField->getType() to switch between templates input/textarea 
-- Field labels and description only showing a translation string
+- added a required option (incl. a corresponding database field)
+- added a tab under "website" which - for now - shows the custom metadata settings
+- removed fields from the database table used for localization, label and description
 
-As for the last one: This was due to the software interpreting label and description values in the metadata template as translation keys. The solution was to treat the field values as such and add the translations to the .loc file.
+As for the localization: OJS/OPS 3.3 interprets label and description values in the metadata template as translation keys. So field labels and descriptions have to go in the .loc file. Examples are included.
 
-TODO: support multilingual input. Would require custom_metadata_settings table and some changes
+TODO: support multilingual input
 TODO: backend UI to setup fields
-TODO: input validation
-TODO: option to set fields as required

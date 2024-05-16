@@ -84,6 +84,14 @@ class CustomMetadataGridHandler extends GridHandler {
 		));
 
 		$this->addColumn(new GridColumn(
+			'section',
+			'plugins.generic.customMetadata.metadataFieldSection',
+			null,
+			'controllers/grid/gridCell.tpl', // Default null not supported in OMP 1.1
+			$cellProvider
+		));		
+
+		$this->addColumn(new GridColumn(
 			'required',
 			'plugins.generic.customMetadata.metadataFieldRequired',
 			null,

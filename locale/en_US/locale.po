@@ -32,6 +32,9 @@ msgstr "type"
 msgid "plugins.generic.customMetadata.metadataFieldRequired"
 msgstr "required"
 
+msgid "plugins.generic.customMetadata.metadataFieldSection"
+msgstr "section"
+
 msgid "plugins.generic.customMetadata.description"
 msgstr "The CustomMetadata plugin helps adding custom metadata fields to submissions."
 
