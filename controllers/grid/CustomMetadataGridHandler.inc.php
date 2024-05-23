@@ -11,9 +11,7 @@
 
 import('lib.pkp.classes.controllers.grid.GridHandler');
 import('plugins.generic.customMetadata.controllers.grid.CustomMetadataGridCellProvider');
-import('classes.handler.Handler');
 import('plugins.generic.customMetadata.classes.CustomMetadata');
-
 
 class CustomMetadataGridHandler extends GridHandler {
 

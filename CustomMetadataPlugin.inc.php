@@ -201,10 +201,7 @@ class CustomMetadataPlugin extends GenericPlugin {
 		$customMetadataDao = DAORegistry::getDAO('CustomMetadataDAO');
 		$customFields = $customMetadataDao->getByContextId($contextId);			 
 		while ($customField = $customFields->next()){
-			//$propertyName = $customField->getName();
 			$propertyName = "customValue".$customField->getId();
-			error_log("addToSchema:CustomField " . $propertyName);
-			// $schema->properties->{$propertyName} = (object) [
 			$schema->properties->$propertyName = (object) [
 				'type' => 'string',
 				'apiSummary' => true,
@@ -220,7 +217,6 @@ class CustomMetadataPlugin extends GenericPlugin {
 	 * Insert custom metadata fields into author submission step 3
 	 */
 	function metadataFieldEditWizard($hookName, $params) {
-		error_log("metadataFieldEdit:");
 		$smarty =& $params[1];
 		$output =& $params[2];
 		
@@ -237,7 +233,6 @@ class CustomMetadataPlugin extends GenericPlugin {
 			if ($customField->getSectionId() == $submission->getSectionId() or $customField->getSectionId() == 0) {
 				// Get the setting_name of the field
 				$customValueField = $this->getcustomValueField($customField->getId());
-				error_log("metadataFieldEditWizard: type = " . $customField->getType());
 				// Get the submission custom meta-data setting_value
 				$smarty->assign('customValue', $submission->getData($customValueField));
 				
