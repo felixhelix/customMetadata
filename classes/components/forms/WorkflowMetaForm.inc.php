@@ -1,5 +1,6 @@
 <?php
 
+use PKP\components\forms\FieldRichTextarea;
 use PKP\components\forms\FieldTextarea;
 use PKP\components\forms\FieldText;
 use \PKP\components\forms\FormComponent;
@@ -57,6 +58,16 @@ class WorkflowMetaForm extends FormComponent {
 							'value' => $submission->getData($customValueField),
 						]));			
 					}
+					else if ($customField->getType() == "richtextarea") {
+						$this->addField(new FieldRichTextarea($customValueField, [
+							'label' => __(LOC_KEY_PREFIX . $customField->getName() . ".label"),
+							'description' => __(LOC_KEY_PREFIX . $customField->getName() . ".description"),
+							'groupId' => 'default',
+							'isRequired' => $customField->getRequired(),
+							'value' => $submission->getData($customValueField),
+						]));			
+					}
+
 				}
 			}
 	}

@@ -13,10 +13,9 @@
  * @brief CustomMetadata plugin class
  */
 
-# TODO: Use $customField->getType() to switch between templates input/textarea 
+
 # TODO: support multilingual input. Would require custom_metadata_settings table and some changes
-# TODO: UI in the backend
-# TODO: Field labels and description only showing a translation string
+# TODO: UI to setup custom metadata fields in the backend
 # TODO: input validation
  
 import('lib.pkp.classes.plugins.GenericPlugin');
@@ -248,6 +247,8 @@ class CustomMetadataPlugin extends GenericPlugin {
 					$output .= $smarty->fetch($this->getTemplateResource('textinput.tpl'));
 				} else if ($customField->getType() == "textarea") {
 					$output .= $smarty->fetch($this->getTemplateResource('textareainput.tpl'));
+				} else if ($customField->getType() == "richtextarea") {
+					$output .= $smarty->fetch($this->getTemplateResource('richtextareainput.tpl'));
 				}
 			}
 		}				
