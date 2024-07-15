@@ -45,7 +45,7 @@ msgid "plugins.generic.customMetadata.conflictOfInterests.label"
 msgstr "Competing Interests"
 
 msgid "plugins.generic.customMetadata.conflictOfInterests.description"
-msgstr "Declare possible competing interests"
+msgstr "Declare possible competing interests. In the absence of any conflicts, state 'The authors declare no competing interests'."
 
 msgid "plugins.generic.customMetadata.conflictOfInterests.noneDisclosed"
 msgstr "No competing interests were disclosed."
@@ -54,7 +54,7 @@ msgid "plugins.generic.customMetadata.sourcesOfFunding.label"
 msgstr "Grant Information"
 
 msgid "plugins.generic.customMetadata.sourcesOfFunding.description"
-msgstr "List your sources of funding."
+msgstr "List any sources of funding that have supported the work. If the research did not receive any specific funding, state 'This research received no external funding'."
 
 msgid "plugins.generic.customMetadata.sourcesOfFunding.noneDisclosed"
 msgstr "The author(s) declared that no grants were involved in supporting this work."
@@ -69,4 +69,4 @@ msgid "plugins.generic.customMetadata.dataAvailabilityStatement.label"
 msgstr "Data Availability Statement"
 
 msgid "plugins.generic.customMetadata.dataAvailabilityStatement.description"
-msgstr "Describe how your data (if any) can be accessed."
+msgstr "Describe where and how data underlying your research can be accessed. Any restrictions on data availability must also be disclosed. If data sharing is not applicable, state 'No underlying data are available for this article, since no datasets were generated or analysed during this study'."
