@@ -59,10 +59,10 @@ msgstr "List any sources of funding that have supported the work. If the researc
 msgid "plugins.generic.customMetadata.sourcesOfFunding.noneDisclosed"
 msgstr "The author(s) declared that no grants were involved in supporting this work."
 
-msgid "plugins.generic.customMetadata.preRegistration.label"
+msgid "plugins.generic.customMetadata.preRegistrationInformation.label"
 msgstr "Preregistration Reference"
 
-msgid "plugins.generic.customMetadata.preRegistration.description"
+msgid "plugins.generic.customMetadata.preRegistrationInformation.description"
 msgstr "Insert a reference to a pre-registration if applicable."
 
 msgid "plugins.generic.customMetadata.dataAvailabilityStatement.label"

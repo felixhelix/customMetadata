@@ -200,7 +200,8 @@ class CustomMetadataPlugin extends GenericPlugin {
 		$customMetadataDao = DAORegistry::getDAO('CustomMetadataDAO');
 		$customFields = $customMetadataDao->getByContextId($contextId);			 
 		while ($customField = $customFields->next()){
-			$propertyName = "customValue".$customField->getId();
+			// $propertyName = "customValue".$customField->getId();
+			$propertyName = "customValue_".$customField->getName();
 			$schema->properties->$propertyName = (object) [
 				'type' => 'string',
 				'apiSummary' => true,
@@ -231,13 +232,14 @@ class CustomMetadataPlugin extends GenericPlugin {
 		while ($customField = $customFields->next()){
 			if ($customField->getSectionId() == $submission->getSectionId() or $customField->getSectionId() == 0) {
 				// Get the setting_name of the field
-				$customValueField = $this->getcustomValueField($customField->getId());
+				$customValueField = $this->getcustomValueField($customField->getName());
 				// Get the submission custom meta-data setting_value
 				$smarty->assign('customValue', $submission->getData($customValueField));
 				
 				$smarty->assign(array(
 					'type' => $customField->getType(),				
 					'customValueId' => $customField->getId(),
+					'customValueName' => $customField->getName(),
 					'fieldLabel' => LOC_KEY_PREFIX . $customField->getName() . ".label",
 					'fieldDescription' => LOC_KEY_PREFIX . $customField->getName() . ".description",
 					'required' => $customField->getRequired()
@@ -267,7 +269,7 @@ class CustomMetadataPlugin extends GenericPlugin {
 		$customMetadataDao = DAORegistry::getDAO('CustomMetadataDAO');
 		$customFields = $customMetadataDao->getByContextId($contextId);		 
 		while ($customField = $customFields->next()){
-			$customValueField = "customValue".$customField->getId();
+			$customValueField = "customValue_".$customField->getName();
 			$fields[] = $customValueField;
 		}
 		
@@ -286,7 +288,7 @@ class CustomMetadataPlugin extends GenericPlugin {
 		$customMetadataDao = DAORegistry::getDAO('CustomMetadataDAO');
 		$customFields = $customMetadataDao->getByContextId($contextId); 
 		while ($customField = $customFields->next()){
-			$customValueField = "customValue".$customField->getId();
+			$customValueField = "customValue_".$customField->getName();
 			$userVars[] = $customValueField;
 		}
 		
@@ -307,7 +309,7 @@ class CustomMetadataPlugin extends GenericPlugin {
 		$customMetadataDao = DAORegistry::getDAO('CustomMetadataDAO');
 		$customFields = $customMetadataDao->getByContextId($contextId);			 
 		while ($customField = $customFields->next()){
-			$customValueField = "customValue".$customField->getId();
+			$customValueField = "customValue_".$customField->getName();
 			$customValue = $form->getData($customValueField);
 			$article->setData($customValueField, $customValue);
 		}
@@ -361,8 +363,8 @@ class CustomMetadataPlugin extends GenericPlugin {
 		
 	}
 	
-	function getcustomValueField($customValueId) {
-			return "customValue".$customValueId;
+	function getcustomValueField($customValueName) {
+			return "customValue_".$customValueName;
 	}		
 	
 	

@@ -8,7 +8,7 @@
  * Edit text input element 
  *
  *}
-{assign var="customValueField" value="customValue`$customValueId`"}
+{assign var="customValueField" value="customValue_`$customValueName`"}
 
 {fbvFormArea id=$customValueField}
 	{fbvFormSection label=$fieldLabel for="source" description=$fieldDescription required=$required}

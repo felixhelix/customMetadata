@@ -83,8 +83,8 @@ class CustomMetadataDAO extends DAO {
 	}
 
 	/**
-	 * Update the database with a userComment object
-	 * @param $userComment userComment
+	 * Update the database with a customMetadata object
+	 * @param $customMetadata customMetadata entity
 	 */
 	function updateObject($customMetadata) {
 		$this->update(

@@ -39,7 +39,7 @@ class WorkflowMetaForm extends FormComponent {
 			while ($customField = $customFields->next()){
 				if ($customField->getSectionId() == $submission->getSectionId() or $customField->getSectionId() == 0) {
 					// Get the setting_name of the field
-					$customValueField = "customValue".$customField->getId();
+					$customValueField = "customValue_".$customField->getName();
 					if ($customField->getType() == "text") {
 						$this->addField(new FieldText($customValueField, [
 							'label' => __(LOC_KEY_PREFIX . $customField->getName() . ".label"),
