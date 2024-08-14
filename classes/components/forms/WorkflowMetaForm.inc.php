@@ -37,7 +37,7 @@ class WorkflowMetaForm extends FormComponent {
 			$customMetadataDao = DAORegistry::getDAO('CustomMetadataDAO');
 			$customFields = $customMetadataDao->getByContextId($contextId);			 
 			while ($customField = $customFields->next()){
-				if ($customField->getSectionId() == $submission->getSectionId() or $customField->getSectionId() == 0) {
+				if (in_array($submission->getSectionId(), $customField->getSectionIds())) {
 					// Get the setting_name of the field
 					$customValueField = "customValue_".$customField->getName();
 					if ($customField->getType() == "text") {

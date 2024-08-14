@@ -66,10 +66,10 @@ class CustomMetadataDAO extends DAO {
 	function insertObject($customMetadata) {
 
 		$this->update(
-			'INSERT INTO custom_metadata (context_id, section_id, name, type, required) VALUES (?, ?, ?, ?, ?)',
+			'INSERT INTO custom_metadata (context_id, section_ids, name, type, required) VALUES (?, ?, ?, ?, ?)',
 			array(
 				(int) $customMetadata->getContextId(),
-				(int) $customMetadata->getSectionId(),
+				(int) json_encode($customMetadata->getSectionIds()),
 				(string) $customMetadata->getName(),
 				(string) $customMetadata->getType(),
 				(bool) $customMetadata->getRequired(),
@@ -97,7 +97,7 @@ class CustomMetadataDAO extends DAO {
 			WHERE custom_metadata_id = ?',
 			array(
 				(int) $customMetadata->getContextId(),
-				(int) $customMetadata->getSectionId(),				
+				(string) json_encode($customMetadata->getSectionIds()),				
 				(string) $customMetadata->getType(),
 				(string) $customMetadata->getName(),
 				(bool) $customMetadata->getRequired(),
@@ -142,7 +142,7 @@ class CustomMetadataDAO extends DAO {
 		$customMetadata = $this->newDataObject();
 		$customMetadata->setId($row['custom_metadata_id']);
 		$customMetadata->setContextId($row['context_id']);
-		$customMetadata->setSectionId($row['section_id']);
+		$customMetadata->setSectionIds(json_decode($row['section_ids'], true));
 		$customMetadata->setName($row['name']);
 		$customMetadata->setType($row['type']);		
 		$customMetadata->setRequired($row['required']);		

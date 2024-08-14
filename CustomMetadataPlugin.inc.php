@@ -229,8 +229,8 @@ class CustomMetadataPlugin extends GenericPlugin {
 		$customMetadataDao = DAORegistry::getDAO('CustomMetadataDAO');
 		$customFields = $customMetadataDao->getByContextId($contextId);			 
 
-		while ($customField = $customFields->next()){
-			if ($customField->getSectionId() == $submission->getSectionId() or $customField->getSectionId() == 0) {
+		while ($customField = $customFields->next()){				
+			if (in_array($submission->getSectionId(), $customField->getSectionIds())) {
 				// Get the setting_name of the field
 				$customValueField = $this->getcustomValueField($customField->getName());
 				// Get the submission custom meta-data setting_value

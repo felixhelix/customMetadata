@@ -33,7 +33,7 @@ msgid "plugins.generic.customMetadata.metadataFieldRequired"
 msgstr "required"
 
 msgid "plugins.generic.customMetadata.metadataFieldSection"
-msgstr "section"
+msgstr "sections"
 
 msgid "plugins.generic.customMetadata.description"
 msgstr "The CustomMetadata plugin helps adding custom metadata fields to submissions."
@@ -70,3 +70,9 @@ msgstr "Data Availability Statement"
 
 msgid "plugins.generic.customMetadata.dataAvailabilityStatement.description"
 msgstr "Describe where and how data underlying your research can be accessed. Any restrictions on data availability must also be disclosed. If data sharing is not applicable, state 'No underlying data are available for this article, since no datasets were generated or analysed during this study'."
+
+msgid "plugins.generic.customMetadata.language.label"
+msgstr "Primary Language"
+
+msgid "plugins.generic.customMetadata.dataAvailabilityStatement.language"
+msgstr "What is the primary language of your submission?"

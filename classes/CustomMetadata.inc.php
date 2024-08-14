@@ -37,12 +37,12 @@ class CustomMetadata extends DataObject {
 		return $this->setData('contextId', $contextId);
 	}
 
-	function getSectionId() {
-		return $this->getData('sectionId');
+	function getSectionIds() {
+		return $this->getData('sectionIds');
 	}
 
-	function setSectionId($sectionId) {
-		return $this->setData('sectionId', $sectionId);
+	function setSectionIds($sectionIds) {
+		return $this->setData('sectionIds', $sectionIds);
 	}
 	
 	function getType() {

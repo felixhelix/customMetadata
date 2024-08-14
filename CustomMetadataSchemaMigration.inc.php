@@ -26,7 +26,7 @@ class CustomMetadataSchemaMigration extends Migration
         Capsule::schema()->create('custom_metadata', function (Blueprint $table) {
             $table->bigInteger('custom_metadata_id')->autoIncrement();
             $table->bigInteger('context_id');
-            $table->bigInteger('section_id');
+            $table->string('section_ids');
             $table->string('name', 255);            
             $table->string('type', 255);
             $table->boolean('required');
