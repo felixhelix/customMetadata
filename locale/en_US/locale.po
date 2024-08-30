@@ -74,5 +74,5 @@ msgstr "Describe where and how data underlying your research can be accessed. An
 msgid "plugins.generic.customMetadata.language.label"
 msgstr "Primary Language"
 
-msgid "plugins.generic.customMetadata.dataAvailabilityStatement.language"
+msgid "plugins.generic.customMetadata.language.description"
 msgstr "What is the primary language of your submission?"
