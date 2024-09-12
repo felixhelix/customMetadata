@@ -54,7 +54,7 @@ class CustomMetadataPlugin extends GenericPlugin {
 			// Hook for execute -- consider the new fields in the article settings
 			HookRegistry::register('submissionsubmitstep3form::execute', array($this, 'metadataExecute'));
 			// Hook for save  -- add validation for the new fields
-			HookRegistry::register('submissionsubmitstep3form::Constructor', array($this, 'addCheck'));
+			// HookRegistry::register('submissionsubmitstep3form::validate', array($this, 'addCheck'));
 			// Consider the new fields for ArticleDAO for storage
 			// HookRegistry::register('articledao::getAdditionalFieldNames', array($this, 'articleSubmitGetFieldNames'));
 
@@ -223,8 +223,12 @@ class CustomMetadataPlugin extends GenericPlugin {
 		$fbv = $smarty->getFBV();
 		$form = $fbv->getForm();
 		
-		$submission = $form->submission;
-		
+		// get the data from the database, and not from the form, 
+		// as new values may not have been included 
+		$submissionId = $form->submission->getId();
+		$submissionDao = DAORegistry::getDAO('SubmissionDAO');
+		$submission = $submissionDao->getById($submissionId);
+
 		$contextId = $this->getCurrentContextId();
 		$customMetadataDao = DAORegistry::getDAO('CustomMetadataDAO');
 		$customFields = $customMetadataDao->getByContextId($contextId);			 
@@ -283,6 +287,7 @@ class CustomMetadataPlugin extends GenericPlugin {
 	 */
 	function metadataReadUserVars($hookName, $params) {
 		$userVars =& $params[1];
+		$customVars = [];
 		$contextId = $this->getCurrentContextId();
 		
 		$customMetadataDao = DAORegistry::getDAO('CustomMetadataDAO');
@@ -290,8 +295,24 @@ class CustomMetadataPlugin extends GenericPlugin {
 		while ($customField = $customFields->next()){
 			$customValueField = "customValue_".$customField->getName();
 			$userVars[] = $customValueField;
+			$customVars[] = $customValueField;
 		}
-		
+
+		// If required pkp tagit fields are not set, the page is reloaded and the custom values are lost
+		// so we have to update them already at this step
+		// DOES NOT WORK AS EXPECTED: VALUES ARE WRITTEN TO THE DB, 
+		// BUT ONLY INCLUDED AFTER FORM IS SUBMITTED FOR A SECOND TIME?!
+		$request = Application::get()->getRequest();
+		// Get the submission
+		$submissionId = (int) $request->getUserVar("submissionId");
+		$submissionDao = DAORegistry::getDAO('SubmissionDAO');
+        $submission = $submissionDao->getById($submissionId);		
+		// Set the values
+		foreach ($customVars as $userVar) {
+			$submission->setData($userVar, $request->getUserVar($userVar));
+		}
+		$submissionDao->updateObject($submission);
+
 		return false;
 	}
 
@@ -319,8 +340,11 @@ class CustomMetadataPlugin extends GenericPlugin {
 	 * Add check/validation
 	 */
 	function addCheck($hookName, $params) {
+		error_log("addCheck");
 		$form =& $params[0];
+		// $template = $params[1];
 		
+		error_log(json_encode($form));
 		# Requires some changes to the plugin database
 		
 		return false;
@@ -332,6 +356,8 @@ class CustomMetadataPlugin extends GenericPlugin {
 	 * @param array $params [string, TemplateManager]
 	 */	
 	function metadataFieldEdit($hookName, $params): void {
+
+		error_log("metadataFieldEdit");
 
 		$request = $this->getRequest();
 		$context = $request->getContext();
