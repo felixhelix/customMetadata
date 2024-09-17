@@ -76,3 +76,12 @@ msgstr "Primary Language"
 
 msgid "plugins.generic.customMetadata.language.description"
 msgstr "What is the primary language of your submission?"
+
+msgid "plugins.generic.customMetadata.checkedContributors.label"
+msgstr "Contributor Information"
+
+msgid "plugins.generic.customMetadata.checkedContributors.description"
+msgstr "Contributor information needs to be completed additionally for each submission: If you are the sole author please complete the contributor information by editing your entry in the 'List of Contributors' above. If there are additional contributors please add them to the list as well."
+
+msgid "plugins.generic.customMetadata.checkedContributors.option"
+msgstr "Yes, I have completed the contributor information."

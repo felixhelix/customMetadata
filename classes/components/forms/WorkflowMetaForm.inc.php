@@ -3,7 +3,8 @@
 use PKP\components\forms\FieldRichTextarea;
 use PKP\components\forms\FieldTextarea;
 use PKP\components\forms\FieldText;
-use \PKP\components\forms\FormComponent;
+use PKP\components\forms\FieldOptions;
+use PKP\components\forms\FormComponent;
 
 define("FORM_WORKFLOW_CUSTOM_META", "customMetadata");
 
@@ -67,7 +68,20 @@ class WorkflowMetaForm extends FormComponent {
 							'value' => $submission->getData($customValueField),
 						]));			
 					}
-
+					/* 
+					else if ($customField->getType() == "checkbox") {
+						$this->addField(new FieldOptions($customValueField, [
+							'label' => __(LOC_KEY_PREFIX . $customField->getName() . ".label"),
+							'description' => __(LOC_KEY_PREFIX . $customField->getName() . ".description"),
+							'groupId' => 'default',
+							'isRequired' => $customField->getRequired(),
+							'options' => [
+								['value' => true, 'label' => 'checked'],
+							],
+							'value' => (bool) ($submission->getData($customValueField) == 'true') ? true : false
+						]));		
+					}					
+					 */
 				}
 			}
 	}

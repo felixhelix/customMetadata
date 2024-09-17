@@ -49,7 +49,8 @@ class CustomMetadataHandler extends APIHandler
             // Get the setting_name of the field
             // $customValueField = "customValue".$customField->getId();
             $customValueField = "customValue_".$customField->getName();
-            $submission->setData($customValueField, $requestParams[$customValueField]);            
+            $submission->setData($customValueField, $requestParams[$customValueField]);  
+            error_log($customField->getName() . ": " . $requestParams[$customValueField]);          
         }
         $SubmissionDao->updateObject($submission);    
 

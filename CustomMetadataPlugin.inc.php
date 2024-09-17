@@ -239,15 +239,21 @@ class CustomMetadataPlugin extends GenericPlugin {
 				$customValueField = $this->getcustomValueField($customField->getName());
 				// Get the submission custom meta-data setting_value
 				$smarty->assign('customValue', $submission->getData($customValueField));
-				
-				$smarty->assign(array(
+
+				$properties = array(
 					'type' => $customField->getType(),				
 					'customValueId' => $customField->getId(),
 					'customValueName' => $customField->getName(),
 					'fieldLabel' => LOC_KEY_PREFIX . $customField->getName() . ".label",
 					'fieldDescription' => LOC_KEY_PREFIX . $customField->getName() . ".description",
-					'required' => $customField->getRequired()
-				));
+					'required' => $customField->getRequired(),
+				);
+
+				if ($customField->getType() == "checkbox") {
+					$properties['fieldOption'] = LOC_KEY_PREFIX . $customField->getName() . ".option";
+				};
+				
+				$smarty->assign($properties);
 				
 				if ($customField->getType() == "text") {
 					$output .= $smarty->fetch($this->getTemplateResource('textinput.tpl'));
@@ -255,7 +261,9 @@ class CustomMetadataPlugin extends GenericPlugin {
 					$output .= $smarty->fetch($this->getTemplateResource('textareainput.tpl'));
 				} else if ($customField->getType() == "richtextarea") {
 					$output .= $smarty->fetch($this->getTemplateResource('richtextareainput.tpl'));
-				}
+				} else if ($customField->getType() == "checkbox") {
+					$output .= $smarty->fetch($this->getTemplateResource('checkbox.tpl'));
+			}
 			}
 		}				
 
