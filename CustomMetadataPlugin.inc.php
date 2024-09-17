@@ -365,8 +365,6 @@ class CustomMetadataPlugin extends GenericPlugin {
 	 */	
 	function metadataFieldEdit($hookName, $params): void {
 
-		error_log("metadataFieldEdit");
-
 		$request = $this->getRequest();
 		$context = $request->getContext();
 		$templateMgr = $params[1];
