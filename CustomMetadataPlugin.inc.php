@@ -373,8 +373,10 @@ class CustomMetadataPlugin extends GenericPlugin {
 
 		// check if the section has any custom-metadata
 		$customMetadataDao = DAORegistry::getDAO('CustomMetadataDAO');
-		if ($customMetadataDao->getBySectionId($submission->getSectionId())->rowCount) {
-
+		$customMetaData = $customMetadataDao->getBySectionId($submission->getSectionId());
+		$customMetaDataCount = 0;
+		if ($customMetaData->next()) { $customMetaDataCount += 1; }
+		if ($customMetaDataCount) {
 			$latestPublication = $submission->getLatestPublication();
 			$latestPublicationApiUrl = $request->getDispatcher()->url($request, ROUTE_API, $context->getData('urlPath'), 'customMetadata/update/' . $submission->getId());
 

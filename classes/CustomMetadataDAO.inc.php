@@ -61,13 +61,13 @@ class CustomMetadataDAO extends DAO {
 	 * @param $sectionId int section ID
 	 */
 	function getBySectionId($sectionId = null) {
-		$params = [];
-		if ($sectionId) $params[] = (int) $sectionId;
-
+		if ($sectionId) {
+			$query = sprintf(' WHERE INSTR(section_ids, "[%1$d,") OR INSTR(section_ids, ",%1$d,") OR INSTR(section_ids, ",%1$d]")', $sectionId);
+		}
+		
 		$result = $this->retrieve(
 			'SELECT * FROM custom_metadata'
-			. ($sectionId?' WHERE section_ids LIKE  "[?,%" OR "%,?,%" OR "%,?]"' :''),
-			$params
+			. ($sectionId? $query :'')
 		);
 
 		return new DAOResultFactory($result, $this, '_fromRow');
