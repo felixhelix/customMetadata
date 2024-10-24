@@ -370,16 +370,23 @@ class CustomMetadataPlugin extends GenericPlugin {
 		$templateMgr = $params[1];
 
 		$submission = $templateMgr->getTemplateVars('submission');
-		$latestPublication = $submission->getLatestPublication();
-		$latestPublicationApiUrl = $request->getDispatcher()->url($request, ROUTE_API, $context->getData('urlPath'), 'customMetadata/update/' . $submission->getId());
 
-		$form = new WorkflowMetaForm($latestPublicationApiUrl, $submission);
-		$state = $templateMgr->getTemplateVars('state');
-		$state['components'][FORM_WORKFLOW_CUSTOM_META] = $form->getConfig();
-		$templateMgr->assign(['state'=> $state,
-		]);	
+		// check if the section has any custom-metadata
+		$customMetadataDao = DAORegistry::getDAO('CustomMetadataDAO');
+		if ($customMetadataDao->getBySectionId($submission->getSectionId())->rowCount) {
 
-		$templateMgr->display($this->getTemplateResource("workflowTab.tpl"));	
+			$latestPublication = $submission->getLatestPublication();
+			$latestPublicationApiUrl = $request->getDispatcher()->url($request, ROUTE_API, $context->getData('urlPath'), 'customMetadata/update/' . $submission->getId());
+
+			$form = new WorkflowMetaForm($latestPublicationApiUrl, $submission);
+			$state = $templateMgr->getTemplateVars('state');
+			$state['components'][FORM_WORKFLOW_CUSTOM_META] = $form->getConfig();
+			$templateMgr->assign(['state'=> $state,
+			]);	
+
+			$templateMgr->display($this->getTemplateResource("workflowTab.tpl"));	
+
+		}
 	}
 
 	/**

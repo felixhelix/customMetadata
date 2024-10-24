@@ -56,7 +56,22 @@ class CustomMetadataDAO extends DAO {
 		return new DAOResultFactory($result, $this, '_fromRow');
 	}
 
+	/**
+	 * Get all customMetadat objects for a given section
+	 * @param $sectionId int section ID
+	 */
+	function getBySectionId($sectionId = null) {
+		$params = [];
+		if ($sectionId) $params[] = (int) $sectionId;
 
+		$result = $this->retrieve(
+			'SELECT * FROM custom_metadata'
+			. ($sectionId?' WHERE section_ids LIKE  "[?,%" OR "%,?,%" OR "%,?]"' :''),
+			$params
+		);
+
+		return new DAOResultFactory($result, $this, '_fromRow');
+	}
 
 	/**
 	 * Insert a custom metadata field.
